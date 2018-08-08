@@ -24,6 +24,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--todir', help='dest dir for special files')
     parser.add_argument('--tozip', help='dest zipfile for special files')
+    # TODO need an argument to pick up 'from_dir'
     args = parser.parse_args()
 
     # TODO you must write your own code to get the cmdline args.
