@@ -7,17 +7,17 @@ You will write functions and add them to copyspecial.py.  The copyspecial.py pr
 
 Suggested functions for your solution(details below):
 
-*   get\_special\_paths(dir) -- returns a list of the absolute paths of the special files in the given directory
+*   get_special_paths(dir) -- returns a list of the absolute paths of the special files in the given directory
 *   copy_to(paths, dir) given a list of paths, copies those files into the given directory
 *   zip_to(paths, zippath) given a list of paths, zip those files up into the given zipfile
 
 Part A (manipulating file paths)
 --------------------------------
 
-Gather a list of the absolute paths of the special files in all the directories. In the simplest case, just print that list (here the "." after the command is a single argument indicating the current directory). Print one absolute path per line.
+Gather a list of the absolute paths of the special files in all the directories. In the simplest case, just print that list (here the `.` after the command is a single argument indicating the current directory). Print one absolute path per line.
 
 
-    $ ./copyspecial.py .
+    $ python copyspecial.py .
     /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/xyz__hello__.txt
     /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/zz__something__.jpg
 
@@ -29,22 +29,22 @@ Part B (file copying)
 
 If the "--todir dir" option is present at the start of the command line, do not print anything. Instead, copy the files to the given directory, creating it if necessary. Use the python module `shutil` for file copying.
 
-    $ ./copyspecial.py --todir /tmp/fooby .
+    $ python copyspecial.py --todir /tmp/fooby .
     $ ls /tmp/fooby
     xyz__hello__.txt        zz__something__.jpg
 
 Part C (calling an external program)
 ------------------------------------
 
-If the "--tozip zipfile" option is present at the start of the command line, run this command: "zip -j zipfile <list all the files>". This will create a zipfile containing the files. Just for fun/reassurance, also print the command line you are going to do first (as shown in lecture). (Windows note: windows does not come with a program to produce standard .zip archives by default, but you can get download the free and open zip program from[www.info-zip.org](http://www.info-zip.org/).)
+If the "--tozip zipfile" option is present at the start of the command line, run this command: "zip -j zipfile <list all the files>". This will create a zipfile containing the files. Just for fun/reassurance, also print the command line you are going to do first (as shown in lecture). (Windows note: windows does not come with a program to produce standard .zip archives by default, but you can get download the free and open zip program from [www.info-zip.org](http://www.info-zip.org/).)
 
-    $ ./copyspecial.py --tozip tmp.zip .
+    $ python copyspecial.py --tozip tmp.zip .
     Command I'm going to do:  
     zip -j tmp.zip /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/xyz__hello__.txt /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/zz__something__.jpg
 
 If the child process exits with an error code, exit with an error code and print the command's output. Test this by trying to write a zip file to a directory that does not exist.
 
-    $ ./copyspecial.py --tozip /no/way.zip .
+    $ python copyspecial.py --tozip /no/way.zip .
     Command I'm going to do:  
     zip -j /no/way.zip /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/xyz__hello__.txt /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/zz__something__.jpg
     
