@@ -50,3 +50,8 @@ If the child process exits with an error code, exit with an error code and print
     
     zip I/O error: No such file or directory
     zip error: Could not create output file (/no/way.zip)
+
+## Guidelines
+ - Your code style should be able to pass a PEP8 test
+ - Indents are 4 SPACES (not 2)
+ - Variable names in snake_case
