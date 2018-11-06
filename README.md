@@ -1,9 +1,9 @@
-Copyspecial Python Exercise
+Copyspecial
 ===========================
 
 Your starting point is [copyspecial.py](./copyspecial.py)
 
-You will write functions and add them to copyspecial.py.  The copyspecial.py program takes one or more directories as its arguments. We'll say that a "special" file is one where the name contains the pattern `__w__` somewhere, where the w is one or more word chars. The provided main() includes code to parse the command line arguments, but the rest is up to you. Write functions to implement the features below and modify main() to call your functions.
+You will write functions and add them to `copyspecial.py`.  The `copyspecial.py` program takes one or more directories as its arguments. A "special" file is defined as one where the name contains the pattern `__w__` somewhere, where the `w` is one or more word chars. The provided main() includes code to parse the command line arguments, but the rest is up to you. Write functions to implement the features below and modify main() to call your functions.
 
 Suggested functions for your solution(details below):
 
@@ -55,3 +55,11 @@ If the child process exits with an error code, exit with an error code and print
  - Your code style should be able to pass a PEP8 test
  - Indents are 4 SPACES (not 2)
  - Variable names in snake_case
+ 
+## Workflow for this Assignment
+1. Fork this repository into your own personal github account.
+2. Then Clone your own repo to your local development machine.
+3. Create a separate branch named dev/your-github-username, and checkout the branch.
+4. Commit your changes, then git push the branch back to your own github account.
+5. From your own Github repo, create a pull request (PR) from your dev branch back to your own master.
+6. Copy/Paste the URL link to your PR as your assignment submission.
