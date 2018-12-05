@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Copyspecial Assignment"""
+
 # Copyright 2010 Google Inc.
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
@@ -6,15 +9,15 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
-import sys
 import re
 import os
 import shutil
-import commands
+import subprocess
 import argparse
 
-"""Copy Special exercise
-"""
+# This is to help coaches and graders identify student assignments
+__author__ = "???"
+
 
 # +++your code here+++
 # Write functions and modify main() to call them
@@ -36,6 +39,7 @@ def main():
 
     # +++your code here+++
     # Call your functions
-  
+
+
 if __name__ == "__main__":
     main()
