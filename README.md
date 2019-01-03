@@ -29,8 +29,8 @@ Part B (file copying)
 
 If the "--todir dir" option is present at the start of the command line, do not print anything. Instead, copy the files to the given directory, creating it if necessary. Use the python module `shutil` for file copying.
 
-    $ python copyspecial.py --todir /tmp/fooby .
-    $ ls /tmp/fooby
+    $ python copyspecial.py --todir tmp/fooby .
+    $ ls tmp/fooby
     xyz__hello__.txt        zz__something__.jpg
 
 Part C (calling an external program)
@@ -52,14 +52,15 @@ If the child process exits with an error code, exit with an error code and print
     zip error: Could not create output file (/no/way.zip)
 
 ## Guidelines
- - Your code style should be able to pass a PEP8 test
+ - Your code style should be able to pass a PEP8 (flake8) test
  - Indents are 4 SPACES (not 2)
  - Variable names in snake_case
+ - Docstrings as first line of a function
  
 ## Workflow for this Assignment
 1. Fork this repository into your own personal github account.
-2. Then Clone your own repo to your local development machine.
-3. Create a separate branch named dev/your-github-username, and checkout the branch.
-4. Commit your changes, then git push the branch back to your own github account.
-5. From your own Github repo, create a pull request (PR) from your dev branch back to your own master.
+2. Then clone your own repo to your local development machine.
+3. Create a separate branch named 'dev', and checkout the branch.
+4. Commit your changes, then `git push` the branch back to your own github account.
+5. From your own github repo, create a pull request (PR) from your dev branch back to your own master branch.
 6. Copy/Paste the URL link to your PR as your assignment submission.
