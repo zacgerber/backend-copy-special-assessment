@@ -52,9 +52,11 @@ If the child process exits with an error code, exit with an error code and print
     zip error: Could not create output file (/no/way.zip)
 
 ## Guidelines
+ - Use the `subprocess` library to launch `zip` directly as a command line utility
+ - Don't use the `zipfile` library this time
  - Your code style should be able to pass a PEP8 (flake8) test
  - Indents are 4 SPACES (not 2)
- - Variable names in snake_case
+ - Well-chosen variable names should be in `snake_case`
  - Docstrings as first line of a function
  
 ## Workflow for this Assignment
