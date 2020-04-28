@@ -17,7 +17,7 @@ import string
 import shutil
 import zipfile
 
-PKG_NAME = 'soln.copyspecial'  # devs: change this to soln.copyspecial to test solution
+PKG_NAME = 'copyspecial'  # devs: change this to soln.copyspecial to test solution
 
 
 class TestCopyspecial(unittest.TestCase):
@@ -40,6 +40,10 @@ class TestCopyspecial(unittest.TestCase):
     def test_get_special_paths(self):
         """Checking for list of absolute special paths"""
         abs_path_list = self.module.get_special_paths(".")
+        self.assertIsInstance(
+            abs_path_list, list, 
+            "get_special_paths is not returning a list"
+            )
         # should not return an empty list
         self.assertNotEqual(len(abs_path_list), 0)
         for p in abs_path_list:
@@ -64,6 +68,10 @@ class TestCopyspecial(unittest.TestCase):
                 open(full_path, "w").close()
 
             abs_path_list = self.module.get_special_paths(dirname)
+            self.assertIsInstance(
+                abs_path_list, list, 
+                "get_special_paths is not returning a list"
+                )
             self.assertEqual(len(abs_path_list), 2)
             for p in abs_path_list:
                 # is it a 'special' path?
@@ -107,8 +115,10 @@ class TestCopyspecial(unittest.TestCase):
             src_list = [os.path.join(src_dir, f) for f in src_files]
 
             zip_name = "kenzie-copyspecial-ziptest.zip"
-            os.unlink(zip_name)
+            if os.path.exists(zip_name):
+                os.remove(zip_name)
             self.module.zip_to(src_list, zip_name)
+            assert os.path.exists(zip_name), "The zipfile was not created."
             # open zipfile and verify
             with zipfile.ZipFile(zip_name) as z:
                 dest_files = list(z.NameToInfo.keys())

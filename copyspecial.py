@@ -23,12 +23,12 @@ def get_special_paths(dirname):
     return
 
 
-def copy_to(dirname):
+def copy_to(path_list, dest_dir):
     # your code here
     return
 
 
-def zip_to(dirname):
+def zip_to(path_list, dest_zip):
     # your code here
     return
 
@@ -48,8 +48,7 @@ def main(args):
     # This is input data validation.  If something is wrong (or missing) with any
     # required args, the general rule is to print a usage message and exit(1).
 
-    # +++your code here+++
-    # Call your functions
+    # Your code here: Invoke (call) your functions
 
 
 if __name__ == "__main__":
