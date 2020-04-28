@@ -6,29 +6,40 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
-# Google's Python Class
-# http://code.google.com/edu/languages/google-python-class/
+# give credits
+__author__ = "???"
 
 import re
 import os
+import sys
 import shutil
 import subprocess
 import argparse
 
-# This is to help coaches and graders identify student assignments
-__author__ = "???"
+
+def get_special_paths(dirname):
+    """Given a dirname, returns a list of all its special files."""
+    # your code here
+    return
 
 
-# +++your code here+++
-# Write functions and modify main() to call them
+def copy_to(dirname):
+    # your code here
+    return
 
-def main():
+
+def zip_to(dirname):
+    # your code here
+    return
+
+
+def main(args):
     # This snippet will help you get started with the argparse module.
     parser = argparse.ArgumentParser()
     parser.add_argument('--todir', help='dest dir for special files')
     parser.add_argument('--tozip', help='dest zipfile for special files')
-    # TODO need an argument to pick up 'from_dir'
-    args = parser.parse_args()
+    # TODO add one more argument definition to parse the 'from_dir'
+    ns = parser.parse_args(args)
 
     # TODO you must write your own code to get the cmdline args.
     # Read the docs and examples for the argparse module about how to do this.
@@ -42,4 +53,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
