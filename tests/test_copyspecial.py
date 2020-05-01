@@ -16,8 +16,23 @@ import random
 import string
 import shutil
 import zipfile
+from io import StringIO
 
-PKG_NAME = 'copyspecial'  # devs: change this to soln.copyspecial to test solution
+# devs: change this to soln.copyspecial to test solution
+PKG_NAME = 'copyspecial'
+
+
+class Capturing(list):
+    """Context Mgr helper for capturing stdout from a function call"""
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout
 
 
 class TestCopyspecial(unittest.TestCase):
@@ -28,9 +43,15 @@ class TestCopyspecial(unittest.TestCase):
         cls.assertGreaterEqual(cls, sys.version_info[0], 3)
         cls.module = importlib.import_module(PKG_NAME)
         # a dictionary of the functions in the module
-        cls.funcs = {k: v for k, v in inspect.getmembers(cls.module, inspect.isfunction)}
+        cls.funcs = {
+            k: v for k, v in inspect.getmembers(
+                cls.module, inspect.isfunction
+                )
+            }
         # check for required functions
-        assert "get_special_paths" in cls.funcs, "Missing the get_special_paths() function"
+        assert "get_special_paths" in cls.funcs, \
+            "Missing the get_special_paths() function"
+
         assert "zip_to" in cls.funcs, "Missing the zip_to() function"
         assert "copy_to" in cls.funcs, "Missing the copy_to() function"
 
@@ -41,7 +62,7 @@ class TestCopyspecial(unittest.TestCase):
         """Checking for list of absolute special paths"""
         abs_path_list = self.module.get_special_paths(".")
         self.assertIsInstance(
-            abs_path_list, list, 
+            abs_path_list, list,
             "get_special_paths is not returning a list"
             )
         # should not return an empty list
@@ -69,7 +90,7 @@ class TestCopyspecial(unittest.TestCase):
 
             abs_path_list = self.module.get_special_paths(dirname)
             self.assertIsInstance(
-                abs_path_list, list, 
+                abs_path_list, list,
                 "get_special_paths is not returning a list"
                 )
             self.assertEqual(len(abs_path_list), 2)
@@ -140,6 +161,27 @@ class TestCopyspecial(unittest.TestCase):
                 len(func.__doc__), 10,
                 "How about a bit more docstring?"
                 )
+
+    def test_main_print(self):
+        """Check if the main function is printing the special files list"""
+        with tempfile.TemporaryDirectory(prefix='kenzie-') as src_dir:
+            # create 10 random empty files in src_dir
+            src_files = [self.random_string() for _ in range(10)]
+            src_files.extend(
+                "__" + self.random_string() + "__" for _ in range(10)
+                )
+            src_list = []
+            for f in src_files:
+                full_path = os.path.join(src_dir, f)
+                open(full_path, 'w').close()
+                src_list.append(full_path)
+
+            with Capturing() as output:
+                # Create some special files
+                args = [src_dir]
+                self.module.main(args)
+            self.assertIsInstance(output, list)
+            self.assertEqual(len(output), 10)
 
 
 if __name__ == '__main__':
