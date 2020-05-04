@@ -159,18 +159,6 @@ class TestCopyspecial(unittest.TestCase):
             )
         self.clean(zip_name)
 
-    def test_zip_to_2(self):
-        """Checking if zip_to fails with IOError"""
-        zip_name = "/no/way/kenzie-copyspecial-ziptest.zip"
-        try:
-            self.module.zip_to(self.rfs.abs_file_list, zip_name)
-        except Exception:
-            pass
-        self.assertFalse(
-            os.path.exists(zip_name),
-            "This file should not exist"
-            )
-
     def test_doc_strings(self):
         """Checking for docstrings on all functions"""
         self.assertTrue(self.funcs, "Module functions are missing")
