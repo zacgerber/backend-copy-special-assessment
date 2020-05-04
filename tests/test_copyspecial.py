@@ -20,6 +20,7 @@ from io import StringIO
 
 # devs: change this to soln.copyspecial to test solution
 PKG_NAME = 'copyspecial'
+SPL_REGEX = re.compile(r'__(\w+)__')
 
 
 class Capturing(list):
@@ -35,118 +36,140 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 
-class TestCopyspecial(unittest.TestCase):
+class RandomFileSet:
+    """Creates a set of special/notspecial files in a random temp dir"""
+    def __init__(self):
+        self.tmp_dir, self.file_list = self.random_fileset()
+        self.abs_file_list = [
+            os.path.abspath(os.path.join(self.tmp_dir, f))
+            for f in self.file_list
+        ]
+        self.spl_file_list = list(filter(SPL_REGEX.search, self.abs_file_list))
 
+    def __del__(self):
+        """Clean up our own dir"""
+        shutil.rmtree(self.tmp_dir, ignore_errors=True)
+
+    def random_filename(self):
+        """helper method to generate a random special/notspecial filename"""
+        prefix = random.choice(("", "_", "__", "___"))
+        suffix = random.choice(("", "_", "__", "___"))
+        size = random.randint(1, 21)
+        filename = (
+            prefix
+            + "".join(random.sample(string.ascii_lowercase, size))
+            + suffix
+            )
+        return filename
+
+    def random_fileset(self):
+        """helper to create a set of mixed files in a temp folder"""
+        tmp_dir = tempfile.mkdtemp(prefix='kenzie-copyspec-')
+        # guarantee at least one
+        file_list = ['__example_special_file__']
+        open(os.path.join(tmp_dir, file_list[0]), 'w').close()
+        for _ in range(random.randint(43, 314)):  # arbitrary
+            filename = self.random_filename()
+            open(os.path.join(tmp_dir, filename), 'w').close()
+            file_list.append(filename)
+        return tmp_dir, file_list
+
+
+class TestCopyspecial(unittest.TestCase):
+    """Main test fixture for copyspecial module"""
     @classmethod
     def setUpClass(cls):
+        """Performs module import and suite setup at test-runtime"""
         # check for python3
         cls.assertGreaterEqual(cls, sys.version_info[0], 3)
+        # This will import the module to be tested
         cls.module = importlib.import_module(PKG_NAME)
-        # a dictionary of the functions in the module
+        # make a dictionary of each function in the test module
         cls.funcs = {
             k: v for k, v in inspect.getmembers(
                 cls.module, inspect.isfunction
                 )
             }
-        # check for required functions
+        # check the funcs for required functions
         assert "get_special_paths" in cls.funcs, \
             "Missing the get_special_paths() function"
-
         assert "zip_to" in cls.funcs, "Missing the zip_to() function"
         assert "copy_to" in cls.funcs, "Missing the copy_to() function"
 
-    def random_string(self, size=10):
-        return "".join(random.sample(string.ascii_lowercase, size))
+    def setUp(self):
+        self.rfs = RandomFileSet()
 
-    def test_get_special_paths(self):
+    def tearDown(self):
+        del self.rfs
+
+    def test_get_special_paths_1(self):
         """Checking for list of absolute special paths"""
-        abs_path_list = self.module.get_special_paths(".")
+        actual_path_list = self.module.get_special_paths('.')
+        expected_path_list = [
+            os.path.abspath(os.path.join(os.getcwd(), f))
+            for f in(os.listdir('.'))
+            if SPL_REGEX.search(f)
+            ]
         self.assertIsInstance(
-            abs_path_list, list,
+            actual_path_list, list,
             "get_special_paths is not returning a list"
             )
-        # should not return an empty list
-        self.assertNotEqual(len(abs_path_list), 0)
-        for p in abs_path_list:
-            # is it a 'special' path?
-            self.assertIsNotNone(re.search(r'__(\w+)__', p))
-            # is it an 'absolute path?
-            self.assertTrue(os.path.isabs(p))
+        self.assertListEqual(actual_path_list, expected_path_list)
 
-    def test_no_hardcoded_paths(self):
+    def test_get_special_paths_2(self):
         """Checking against hard-coded path names"""
-        with tempfile.TemporaryDirectory() as dirname:
-            # temp dir and its files will be auto-deleted
-            filenames = []
-            filenames.append("__" + self.random_string() + "__")
-            filenames.append(self.random_string() + "__")
-            filenames.append("__" + self.random_string())
-            filenames.append(filenames[2] + "__" + filenames[1])
-
-            # 'touch' each file
-            for f in filenames:
-                full_path = os.path.join(dirname, f)
-                open(full_path, "w").close()
-
-            abs_path_list = self.module.get_special_paths(dirname)
-            self.assertIsInstance(
-                abs_path_list, list,
-                "get_special_paths is not returning a list"
-                )
-            self.assertEqual(len(abs_path_list), 2)
-            for p in abs_path_list:
-                # is it a 'special' path?
-                self.assertIsNotNone(re.search(r'__(\w+)__', p))
-                # is it an 'absolute path?
-                self.assertTrue(os.path.isabs(p))
+        actual_path_list = self.module.get_special_paths(self.rfs.tmp_dir)
+        self.assertIsInstance(
+            actual_path_list, list,
+            "get_special_paths is not returning a list"
+            )
+        a = sorted(actual_path_list)
+        b = sorted(self.rfs.spl_file_list)
+        self.assertListEqual(
+            a, b,
+            "Returned path list does not match expected path list"
+            )
 
     def test_copy_to(self):
         """Checking the copy_to function"""
         # Their function should use os.makedirs() to create destination
         # directory if it does not yet exist.
-        with tempfile.TemporaryDirectory(prefix='kenzie-') as src_dir:
-            # create some random binary files in src_dir
-            file_count = range(random.randint(3, 18))
-            src_files = [self.random_string() for _ in file_count]
-            for f in src_files:
-                with open(os.path.join(src_dir, f), 'wb') as fout:
-                    fout.write(os.urandom(1024))
-
-            # call the test module's copy_to() function
-            dest_dir = "/tmp/kenzie-" + self.random_string() + "/copyspecial"
-            src_list = [os.path.join(src_dir, f) for f in src_files]
-            self.module.copy_to(src_list, dest_dir)
-
-            # check if dest_dir was created and all files got copied
-            dest_files = os.listdir(dest_dir)
-            self.assertEqual(sorted(dest_files), sorted(src_files))
-
-            # cleanup destination folder
-            shutil.rmtree(dest_dir, ignore_errors=True)
+        # Call the test module's copy_to() function
+        dest_dir = "/tmp/kenzie-copyto"
+        shutil.rmtree(dest_dir, ignore_errors=True)
+        self.module.copy_to(self.rfs.abs_file_list, dest_dir + "/dest")
+        # check if dest_dir was created and all files got copied
+        a = sorted(os.listdir(dest_dir + "/dest"))
+        b = sorted(self.rfs.file_list)
+        shutil.rmtree(dest_dir, ignore_errors=True)
+        self.assertEqual(a, b, "The copy_to function is not working")
 
     def test_zip_to_1(self):
         """Checking whether special files get zipped"""
-        with tempfile.TemporaryDirectory(prefix='kenzie-') as src_dir:
-            # create some random binary files in src_dir
-            file_count = range(random.randint(3, 18))
-            src_files = [self.random_string() for _ in file_count]
-            for f in src_files:
-                with open(os.path.join(src_dir, f), 'wb') as fout:
-                    fout.write(os.urandom(1024))
-            src_list = [os.path.join(src_dir, f) for f in src_files]
+        zip_name = "kenzie-copyspecial-ziptest.zip"
+        self.clean(zip_name)
+        self.module.zip_to(self.rfs.abs_file_list, zip_name)
+        assert os.path.exists(zip_name), "The zipfile was not created."
+        # open zipfile and verify
+        with zipfile.ZipFile(zip_name) as z:
+            dest_files = list(z.NameToInfo.keys())
+        self.assertEqual(
+            sorted(dest_files), sorted(self.rfs.file_list),
+            "original files are not being zipped"
+            )
+        self.clean(zip_name)
 
-            zip_name = "kenzie-copyspecial-ziptest.zip"
-            if os.path.exists(zip_name):
-                os.remove(zip_name)
-            self.module.zip_to(src_list, zip_name)
-            assert os.path.exists(zip_name), "The zipfile was not created."
-            # open zipfile and verify
-            with zipfile.ZipFile(zip_name) as z:
-                dest_files = list(z.NameToInfo.keys())
-            self.assertEqual(
-                sorted(dest_files), sorted(src_files),
-                "original files are not being zipped"
-                )
+    def test_zip_to_2(self):
+        """Checking if zip_to fails with IOError"""
+        zip_name = "/no/way/kenzie-copyspecial-ziptest.zip"
+        try:
+            self.module.zip_to(self.rfs.abs_file_list, zip_name)
+        except Exception:
+            pass
+        self.assertFalse(
+            os.path.exists(zip_name),
+            "This file should not exist"
+            )
 
     def test_doc_strings(self):
         """Checking for docstrings on all functions"""
@@ -164,24 +187,39 @@ class TestCopyspecial(unittest.TestCase):
 
     def test_main_print(self):
         """Check if the main function is printing the special files list"""
-        with tempfile.TemporaryDirectory(prefix='kenzie-') as src_dir:
-            # create 10 random empty files in src_dir
-            src_files = [self.random_string() for _ in range(10)]
-            src_files.extend(
-                "__" + self.random_string() + "__" for _ in range(10)
-                )
-            src_list = []
-            for f in src_files:
-                full_path = os.path.join(src_dir, f)
-                open(full_path, 'w').close()
-                src_list.append(full_path)
+        args = [self.rfs.tmp_dir]
+        with Capturing() as output:
+            self.module.main(args)
+        self.assertIsInstance(output, list)
+        self.assertEqual(len(output), len(self.rfs.spl_file_list))
 
-            with Capturing() as output:
-                # Create some special files
-                args = [src_dir]
-                self.module.main(args)
-            self.assertIsInstance(output, list)
-            self.assertEqual(len(output), 10)
+    def test_main_copy_to(self):
+        """Check if main() function performs a copy_to operation"""
+        to_dir = "/tmp/kenzie-copyspl-copyto"
+        args = ["--todir", to_dir, self.rfs.tmp_dir]
+        shutil.rmtree(to_dir, ignore_errors=True)
+        self.module.main(args)
+        expected = list(filter(SPL_REGEX.search, os.listdir(to_dir)))
+        self.assertListEqual(
+            os.listdir(to_dir), expected,
+            "The copy_to() function is not being called from main()")
+        shutil.rmtree(to_dir, ignore_errors=True)
+
+    @staticmethod
+    def clean(filepath):
+        try:
+            os.remove(filepath)
+        except OSError:
+            pass
+
+    def test_main_zip_to(self):
+        """Check if main() function performs a zip compression"""
+        to_zip = "/tmp/kenzie-copyspl-zipfile.zip"
+        self.clean(to_zip)
+        args = ["--tozip", to_zip, self.rfs.tmp_dir]
+        self.module.main(args)
+        self.assertTrue(os.path.exists(to_zip))
+        self.clean(to_zip)
 
 
 if __name__ == '__main__':
