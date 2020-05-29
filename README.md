@@ -46,7 +46,7 @@ If the child process exits with an error code, your program should exit, display
 
     % python copyspecial.py --tozip /no/way.zip .
     Command I'm going to do:  
-    zip -j /no/way.zip /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/xyz__hello__.txt /Users/piero/Documents/github/kenzie/backend-copy-special-assessment/zz__something__.jpg
+    zip -j /no/way.zip /Users/daniel/Documents/github/kenzie/backend-copy-special-assessment/xyz__hello__.txt /Users/daniel/Documents/github/kenzie/backend-copy-special-assessment/zz__something__.jpg
     
     zip I/O error: No such file or directory
     zip error: Could not create output file (/no/way.zip)
