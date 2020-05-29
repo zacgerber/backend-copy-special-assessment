@@ -59,6 +59,17 @@ If the child process exits with an error code, your program should exit, display
  - Variable names should be well chosen and meaningful and should be in *snake_case*
  - Include docstrings as the first line of a function
  
+## Testing your code
+Use the VS Code debugger for this assignment &mdash; the debugger is your primary tool as a developer. Have you heard of a carpenter that doesn't know how to use his own hammer? Would you hire that guy? If you need help on this assessment, *be sure you are able to run it in the debugger before asking for help from a coach*.
+
+This assignment contains a `tests` folder that will test your code in several different ways. Make sure you are passing all the tests before you submit your work! There are a couple of ways to test.
+ - From the command line:
+   `% python -m unittest discover`
+ - Using the built-in TDD framework of VS Code. Read [this article](https://code.visualstudio.com/docs/python/testing) and understand how to enable the framework in your VS Code IDE. Once the framework is enabled, you can run and debug any of the tests individually.
+ ![Copyspecial Test](img/vscode-test.png)
+ To view the detailed results of the test output, select the OUTPUT tab in your integrated terminal window, and then choose "Python Test Log" in the dropdown.
+ ![Test Output](img/vscode-output.png)
+
 ## PR (Pull Request) Workflow for this assignment
 1. *Fork* this repository into your own personal GitHub account.
 2. *Clone* your own repo to your local development machine.
