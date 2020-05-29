@@ -19,7 +19,7 @@ import zipfile
 from io import StringIO
 
 # devs: change this to soln.copyspecial to test solution
-PKG_NAME = 'copyspecial'
+PKG_NAME = 'soln.copyspecial'
 SPL_REGEX = re.compile(r'__(\w+)__')
 
 
