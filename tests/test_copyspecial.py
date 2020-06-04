@@ -18,6 +18,9 @@ import shutil
 import zipfile
 from io import StringIO
 
+# suppress __pycache__ and .pyc files
+sys.dont_write_bytecode = True
+
 # devs: change this to soln.copyspecial to test solution
 PKG_NAME = 'copyspecial'
 SPL_REGEX = re.compile(r'__(\w+)__')
