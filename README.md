@@ -7,7 +7,7 @@ You will write functions inside of `copyspecial.py`. The `copyspecial.py` progra
 
 Here are some suggested functions to create in your solution (details below):
 
-*   `get_special_paths(dir)` &mdash; returns a list of the absolute paths of the special files in the given directory
+*   `get_special_paths(dir)` &mdash; returns a list of the absolute paths of the special files in the given directory, but not deeper (no recursive search)
 *   `copy_to(paths, dir)` &mdash; given a list of file paths, copies those files into the given directory
 *   `zip_to(paths, zippath)` &mdash; given a list of file paths, zip those files up into the given zip path
 
